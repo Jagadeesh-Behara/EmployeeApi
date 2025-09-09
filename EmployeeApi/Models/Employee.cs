@@ -14,7 +14,7 @@ namespace EmployeeApi.Models
         public string Name { get; set; } = null!;
 
         [Required]
-        [EmailAddress] // built-in email validation
+        [EmailAddress]
         [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email format")]
         public string Email { get; set; } = null!;
 

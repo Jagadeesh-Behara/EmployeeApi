@@ -1,6 +1,33 @@
 @EmployeeApi_HostAddress = http://localhost:5186
 
-GET {{EmployeeApi_HostAddress}}/weatherforecast/
+GET {{EmployeeApi_HostAddress}}/api/employees
 Accept: application/json
 
 ###
+GET {{EmployeeApi_HostAddress}}/api/employees/6
+Accept: application/json
+
+###
+POST {{EmployeeApi_HostAddress}}/api/employees
+Content-Type: application/json
+{
+  "name": "John Doe",
+  "email" : "john@gmail.com",
+  "position": "Software Engineer",
+  "department": "IT",
+  "salary" :  789
+}
+
+###
+PUT {{EmployeeApi_HostAddress}}/api/employees/6
+Content-Type: application/json
+{
+  "name": "Povi",
+  "email" : "povi@gmail.com",
+  "position": "php developer",
+  "department": "IT",
+  "salary": 456
+}
+
+###
+DELETE {{EmployeeApi_HostAddress}}/api/employees/6
