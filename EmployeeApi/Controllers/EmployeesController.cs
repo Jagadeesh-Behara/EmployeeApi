@@ -61,7 +61,7 @@ namespace EmployeeApi.Controllers
             await _repo.UpdateAsync(updateEmployee);
             return Ok(emp);
         }
-
+        // comment by Jayaram
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
