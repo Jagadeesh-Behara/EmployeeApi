@@ -1,11 +1,12 @@
-﻿using EmployeeApi.Models;
+﻿using EmployeeApi.Data;
+using EmployeeApi.Models;
 
 namespace EmployeeApi.Repositories
 {
     public interface IEmployeeRepository
     {
-        Task<Employee?> GetByIdAsync(int id);
-        Task<(IEnumerable<Employee>, int total)> GetPagedAsync(int page, int pageSize, string? q, string? department);
+        Task<Result<List<Employee>>> GetAllEmployees();
+        Task<Result<Employee?>> GetByIdAsync(int id);
         Task<Employee> CreateAsync(Employee employee);
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(Employee employee);

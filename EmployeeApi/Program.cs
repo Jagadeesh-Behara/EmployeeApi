@@ -1,6 +1,8 @@
 using EmployeeApi.Data;
 using EmployeeApi.Mappings;
 using EmployeeApi.Repositories;
+using EmployeeApi.Validations;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +13,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-builder.Services.AddFluentValidationAutoValidation();
+
+
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddFluentValidationAutoValidation(); // Enables automatic validation in controllers
+builder.Services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
 
 var app = builder.Build();
 

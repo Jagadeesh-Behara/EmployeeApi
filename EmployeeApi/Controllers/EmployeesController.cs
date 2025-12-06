@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EmployeeApi.Data;
 using EmployeeApi.DTOs;
 using EmployeeApi.Models;
 using EmployeeApi.Repositories;
@@ -21,15 +22,11 @@ namespace EmployeeApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? q = null, [FromQuery] string? department = null)
+        public async Task<IActionResult> GetAll()
         {
-            page = Math.Max(1, page);
-            pageSize = Math.Clamp(pageSize, 1, 100);
-
-            var (items, total) = await _repo.GetPagedAsync(page, pageSize, q, department);
-            var dtos = _mapper.Map<IEnumerable<EmployeeDto>>(items);
-
-            return Ok(new { data = dtos, page, pageSize, total });
+            var allEmps = await _repo.GetAllEmployees();
+            //return Ok(_mapper.Map<Result<Employee>>(allEmps));
+            return Ok(_mapper.Map<Result<List<EmployeeDto>>>(allEmps));
         }
 
         [HttpGet("{id}")]
@@ -37,7 +34,7 @@ namespace EmployeeApi.Controllers
         {
             var emp = await _repo.GetByIdAsync(id);
             if (emp == null) return NotFound();
-            return Ok(_mapper.Map<EmployeeDto>(emp));
+            return Ok(_mapper.Map<Result<EmployeeDto>>(emp));
         }
 
         [HttpPost]
@@ -48,7 +45,7 @@ namespace EmployeeApi.Controllers
 
             var emp = _mapper.Map<Employee>(dto);
             var created = await _repo.CreateAsync(emp);
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, _mapper.Map<EmployeeDto>(created));
+            return Ok(created);  
         }
 
         [HttpPut("{id}")]
@@ -60,8 +57,8 @@ namespace EmployeeApi.Controllers
             if (await _repo.ExistsByEmailAsync(dto.Email, id))
                 return Conflict(new { message = "Email already exists" });
 
-            _mapper.Map(dto, emp);
-            await _repo.UpdateAsync(emp);
+            var updateEmployee = _mapper.Map<Employee>(emp);
+            await _repo.UpdateAsync(updateEmployee);
             return Ok(emp);
         }
 
@@ -70,7 +67,8 @@ namespace EmployeeApi.Controllers
         {
             var emp = await _repo.GetByIdAsync(id);
             if (emp == null) return NotFound();
-            await _repo.DeleteAsync(emp);
+            var deleteEmployee = _mapper.Map<Employee>(emp);
+            await _repo.DeleteAsync(deleteEmployee);
             return Ok(emp);
         }
     }

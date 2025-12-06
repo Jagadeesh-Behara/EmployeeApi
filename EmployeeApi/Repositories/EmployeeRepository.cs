@@ -1,5 +1,6 @@
 ﻿using EmployeeApi.Data;
 using EmployeeApi.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeApi.Repositories
@@ -22,36 +23,13 @@ namespace EmployeeApi.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Employee?> GetByIdAsync(int id)
+        public async Task<Result<Employee>> GetById(int id)
         {
-            return await _db.Employees.FindAsync(id);
-        }
-
-        public async Task<(IEnumerable<Employee>, int total)> GetPagedAsync(int page, int pageSize, string? q, string? department)
-        {
-            var query = _db.Employees.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(q))
-            {
-                var term = q.Trim().ToLower();
-                query = query.Where(e => e.Name.ToLower().Contains(term) || e.Email.ToLower().Contains(term));
-            }
-
-            if (!string.IsNullOrWhiteSpace(department))
-            {
-                var dept = department.Trim().ToLower();
-                query = query.Where(e => e.Department != null && e.Department.ToLower() == dept);
-            }
-
-            var total = await query.CountAsync();
-
-            var items = await query
-                .OrderByDescending(e => e.CreatedAt)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return (items, total);
+            //return await _db.Employees.FindAsync(id);
+            var employee = await _db.Employees.FindAsync(id);
+            if (employee == null)
+                return Result<Employee>.Fail("Employee not found");
+            return Result<Employee>.Ok(employee,"Employee found");
         }
 
         public async Task UpdateAsync(Employee employee)
@@ -66,5 +44,22 @@ namespace EmployeeApi.Repositories
             if (excludingId.HasValue) q = q.Where(e => e.Id != excludingId.Value);
             return await q.AnyAsync();
         }
+
+        public async Task<Result<List<Employee>>> GetAllEmployees()
+        {
+            var employees = await _db.Employees.ToListAsync();
+            if (employees == null || employees.Count == 0)
+                return Result<List<Employee>>.Fail("No employees found");
+            return Result<List<Employee>>.Ok(employees, null);
+        }
+
+        public async Task<Result<Employee?>> GetByIdAsync(int id)
+        {
+            var employee = await _db.Employees.FindAsync(id);
+            if (employee == null)
+                return Result<Employee?>.Fail("Employee not found");
+            return Result<Employee?>.Ok(employee, "Employee found");
+        }
+
     }
 }
