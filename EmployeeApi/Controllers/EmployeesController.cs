@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeApi.Controllers
 {
+    // Add comments to explain the purpose of the controller and its methods
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
