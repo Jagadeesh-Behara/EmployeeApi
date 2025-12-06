@@ -25,7 +25,6 @@ namespace EmployeeApi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var allEmps = await _repo.GetAllEmployees();
-            //return Ok(_mapper.Map<Result<Employee>>(allEmps));
             return Ok(_mapper.Map<Result<List<EmployeeDto>>>(allEmps));
         }
 
