@@ -28,7 +28,7 @@ namespace EmployeeApi.Controllers
             var allEmps = await _repo.GetAllEmployees();
             return Ok(_mapper.Map<Result<List<EmployeeDto>>>(allEmps));
         }
-
+        // Comment by Jagadeesh
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
